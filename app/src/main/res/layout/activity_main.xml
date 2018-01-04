@@ -13,13 +13,13 @@
         android:id="@+id/btnCamera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="take a photo" />
+        android:text="infer" />
 
-    <Button
+<!--    <Button
         android:id="@+id/btnSelect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="select an image" />
+        android:text="select an image" />-->
 
     <RelativeLayout
         android:layout_width="fill_parent"
