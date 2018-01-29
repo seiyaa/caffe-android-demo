@@ -10,37 +10,55 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/btnCamera"
+        android:id="@+id/btnCaffe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="infer" />
+        android:text="Caffe Infer" />
 
 <!--    <Button
-        android:id="@+id/btnSelect"
+        android:id="@+id/btnTensorflow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="select an image" />-->
+        android:text="Tensorflow Infer" />-->
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+    <Button
+        android:id="@+id/show_window"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="show logwatcher"/>
 
-        <ImageView
-            android:id="@+id/ivCaptured"
+    <Button
+        android:id="@+id/hide_window"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="hide logwatcher"/>
+    <!--
+        <Button
+            android:id="@+id/save_log"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true" />
+            android:text="save log"/>
 
-        <TextView
-            android:id="@+id/tvLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:background="#88FFFFFF"
-            android:layout_marginTop="20dp"
-            android:layout_centerHorizontal="true" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
 
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/ivCaptured"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true" />
+
+            <TextView
+                android:id="@+id/tvLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:background="#88FFFFFF"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>-->
 
 </LinearLayout>

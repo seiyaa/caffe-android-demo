@@ -119,7 +119,7 @@ public class CapturerA {
         } catch (InstantiationException e) {
             Log.w(TAG, Log.getStackTraceString(e));
         } finally {
-            Log.i(TAG, "isCaptureSupported(), res = " + res);
+//            Log.i(TAG, "isCaptureSupported(), res = " + res);
             return res;
         }
     }
