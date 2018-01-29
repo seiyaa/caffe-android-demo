@@ -38,22 +38,15 @@
         <service android:name=".CaffeInferenceService"/>
         <service android:name=".TensorflowInferenceService"/>
         <service
-            android:name="com.zqlite.android.lolly.Lolly"
+            android:name=".window.LogViewerService"
             android:enabled="true"
-            android:exported="false"
-            android:process=":remote" />
-
-        <activity android:name="com.zqlite.android.lolly.LollyViewer">
+            android:exported="false">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <action android:name="android.intent.action.VIEW" />
-
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:mimeType="text/plain" />
+                <action
+                    android:name="com.sh1r0.caffe_android_demo.CaffeInferenceService"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
-        </activity>
+        </service>
 
     </application>
 

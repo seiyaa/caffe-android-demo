@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.jamdeo.tv.PictureManager;
 import com.jamdeo.tv.TvManager;
 import com.jamdeo.tv.common.EnumConstants;
+import com.sh1r0.caffe_android_demo.window.LogViewerService;
 import com.sh1r0.caffe_android_lib.CaffeMobile;
 import com.zqlite.android.logly.Logly;
 
@@ -131,6 +132,7 @@ public class CaffeInferenceService extends IntentService implements CNNListener 
         int count = resultCounter.get(index).getCount() + 1;
         resultCounter.get(index).setCount(count);
         Logly.i("resultQueue=" + resultQueue);
+        LogViewerService.addMessage("resultQueue=" + resultQueue);
 
         if (resultQueue.size() == MAX_QUEUE) {
             int mostConfidenceLabel = 0;
