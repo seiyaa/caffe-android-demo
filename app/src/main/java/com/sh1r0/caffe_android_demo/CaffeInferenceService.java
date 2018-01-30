@@ -28,14 +28,12 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.jamdeo.tv.PictureManager;
 import com.jamdeo.tv.TvManager;
 import com.jamdeo.tv.common.EnumConstants;
 import com.sh1r0.caffe_android_demo.window.LogViewerService;
 import com.sh1r0.caffe_android_lib.CaffeMobile;
-import com.zqlite.android.logly.Logly;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -54,7 +52,7 @@ import java.util.concurrent.Executors;
 public class CaffeInferenceService extends IntentService implements CNNListener {
     private static final String TAG = CaffeInferenceService.class.getSimpleName();
     private static final int MAX_QUEUE = 10;
-    private static Map<Integer, Integer> PICTURE_MODE_MAPPER = new HashMap<Integer, Integer>();
+    private static Map<Integer, Integer> PICTURE_MODE_MAPPER = null;
 
     static {
         System.loadLibrary("caffe");
@@ -131,8 +129,8 @@ public class CaffeInferenceService extends IntentService implements CNNListener 
         int index = resultCounter.indexOf(caffeResult);
         int count = resultCounter.get(index).getCount() + 1;
         resultCounter.get(index).setCount(count);
-        Logly.i("resultQueue=" + resultQueue);
-        LogViewerService.addMessage("resultQueue=" + resultQueue);
+        LogViewerService.addMessage(resultQueue+"");
+        Log.v(TAG, "resultQueue=" +resultQueue);
 
         if (resultQueue.size() == MAX_QUEUE) {
             int mostConfidenceLabel = 0;
@@ -145,17 +143,16 @@ public class CaffeInferenceService extends IntentService implements CNNListener 
                 }
             }
 
-            Logly.i("mostConfidenceLabel=" + mostConfidenceLabel + ", "
-                    + IMAGENET_CLASSES[mostConfidenceLabel]);
             float percent = (float) mostConfideneceCount / MAX_QUEUE;
-            Logly.i( "percent=" + percent);
+            String msg = mostConfidenceLabel + ", "
+                    + IMAGENET_CLASSES[mostConfidenceLabel]
+                    + ", " + percent;
+            LogViewerService.addMessage(msg);
+            Log.v(TAG, msg);
+
 
             if (percent > 0.8f) {
-                Log.d(TAG, "show toast");
-                String mostConfidenece = IMAGENET_CLASSES[mostConfidenceLabel]
-                        + "(" + mostConfidenceLabel + ")" + ":"
-                        + mostConfideneceCount;
-                Toast.makeText(this, mostConfidenece, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
                 PictureManager pictureManager = TvManager.getInstance().getPictureManager(getApplicationContext());
                 pictureManager.setPictureMode(PICTURE_MODE_MAPPER.get(mostConfidenceLabel));
             }
@@ -195,6 +192,7 @@ public class CaffeInferenceService extends IntentService implements CNNListener 
                          {SetPictureModePreview} ePictureMode = 4  dian ying
                          {SetPictureModePreview} ePictureMode = 5  you xi
                      */
+                    PICTURE_MODE_MAPPER = new HashMap<Integer, Integer>();
                     // Cartoon-------xian yan
                     PICTURE_MODE_MAPPER.put(0, EnumConstants.PictureMode.TIL_PICTURE_MODE_STADIUM);
                     // Entertain-----biao zhun
@@ -218,7 +216,7 @@ public class CaffeInferenceService extends IntentService implements CNNListener 
                         CNNTask cnnTask = new CNNTask(CaffeInferenceService.this);
                         cnnTask.execute(fileFullPath);
                         try {
-                            Thread.sleep(3000);
+                            Thread.sleep(500);
                         } catch (InterruptedException e) {
                             Log.e(TAG, Log.getStackTraceString(e));
                         }
@@ -263,8 +261,8 @@ public class CaffeInferenceService extends IntentService implements CNNListener 
         @Override
         protected void onPostExecute(Integer integer) {
             String result = IMAGENET_CLASSES[integer];
-            Log.i(TAG, String.format("elapsed time %d ms, label is %s",
-                    SystemClock.uptimeMillis() - startTime, result));
+//            Log.i(TAG, String.format("elapsed time %d ms, label is %s",
+//                    SystemClock.uptimeMillis() - startTime, result));
 
             listener.onTaskCompleted(integer);
             super.onPostExecute(integer);

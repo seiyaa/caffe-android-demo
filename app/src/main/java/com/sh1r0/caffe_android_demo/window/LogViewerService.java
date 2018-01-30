@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,6 +22,8 @@ import com.sh1r0.caffe_android_demo.R;
 import com.sh1r0.caffe_android_demo.Util;
 
 import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by jiangjunhou on 2018-1-29.
@@ -31,11 +34,13 @@ public class LogViewerService extends Service {
 
     public static final String TAG = LogViewerService.class.getSimpleName();
     public static final int MSG_MESSAGE_SHOW = 1;
-    public static final LinkedList<Message> mMessages = new LinkedList<>();
+    public static final int MSG_MESSAGE_CLEAR = 2;
+    public static final Queue<Message> mMessages = new ConcurrentLinkedQueue<>();
     private static int INIT_X = 10;
     private static int INIT_Y = 650;
 
     private static TextView mTextView = null;
+    private static int mCount = 0;
     private static ScrollView mScrollView = null;
     private static int SLEEP_INTERVAL = 200;
 
@@ -45,8 +50,12 @@ public class LogViewerService extends Service {
             switch (msg.what) {
                 case MSG_MESSAGE_SHOW:
                     final String time = Util.getShortTime(System.currentTimeMillis());
-                    mTextView.append(time + ": " + ((String) msg.obj) + "\n");
+                    mTextView.append(((String) msg.obj) + "\n");
                     mScrollView.fullScroll(android.view.View.FOCUS_DOWN);
+                    break;
+                case MSG_MESSAGE_CLEAR:
+                    mTextView.setText(null);
+                    mTextView.beginBatchEdit();
                     break;
                 default:
                     break;
@@ -64,6 +73,11 @@ public class LogViewerService extends Service {
     public static synchronized void addMessage(String msg) {
         if (!TextUtils.isEmpty(msg)) {
             mMessages.add(mMessageHandler.obtainMessage(MSG_MESSAGE_SHOW, msg));
+            mCount++;
+            if (mCount == 50) {
+                mMessages.add(mMessageHandler.obtainMessage(MSG_MESSAGE_CLEAR));
+                mCount = 0;
+            }
         }
     }
 
@@ -134,16 +148,21 @@ public class LogViewerService extends Service {
             //do check
             while (!isStop) {
                 if (mMessages.size() > 0) {
-                    Message message = mMessages.pollFirst();
-                    if (message != null) {
-                        try {
-                            Thread.sleep(SLEEP_INTERVAL);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                    try {
+                        Message message = mMessages.poll();
+                        if (message != null) {
+                            message.sendToTarget();
+                            try {
+                                Thread.sleep(SLEEP_INTERVAL);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
-                        message.sendToTarget();
+                    } catch (Exception e) {
+                        Log.e(TAG, Log.getStackTraceString(e));
                     }
                 }
+
             }
         }
 
